@@ -13,9 +13,7 @@
         "name": "Mikael Weiss",
         "email": "mikael@example.com"
       },
-      "source": {
-        "source": "./plugins/spectre"
-      },
+      "source": "./plugins/spectre",
       "category": "development",
       "keywords": [
         "specs",
