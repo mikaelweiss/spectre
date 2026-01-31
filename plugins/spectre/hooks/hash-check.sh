@@ -24,15 +24,10 @@ extract_files_from_spec() {
         /^───/ || /^━━━/ || /^---/ { if (in_where) in_where = 0 }
         in_where && /\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]/ {
             line = $0
-            # Match file paths - handle both relative and absolute
-            if (match(line, /[A-Za-z][A-Za-z0-9_\/.-]*\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
-                path = substr(line, RSTART, RLENGTH)
-                # Extract relative path from absolute paths (find last occurrence of common project dirs)
-                if (match(path, /[a-z]+\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)$/)) {
-                    print substr(path, RSTART, RLENGTH)
-                } else {
-                    print path
-                }
+            # Look for common project directory patterns to extract relative path
+            # Matches: everhour/, convex/, src/, lib/, app/, etc.
+            if (match(line, /(everhour|convex|src|lib|app|test|tests|spec|specs)\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                print substr(line, RSTART, RLENGTH)
             }
         }
     ' "$spec_file" 2>/dev/null | sort -u
