@@ -1,0 +1,10 @@
+{
+  "name": "spectre",
+  "description": "Spec-driven development for Claude Code. Write specs, implement them, verify them with AI reasoning.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mikael Weiss"
+  },
+  "repository": "https://github.com/mikaelweiss/spectre",
+  "license": "MIT"
+}
