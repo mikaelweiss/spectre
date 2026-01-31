@@ -14,8 +14,7 @@
         "email": "mikael@example.com"
       },
       "source": {
-        "source": "github",
-        "repo": "mikaelweiss/spectre"
+        "source": "./plugins/spectre"
       },
       "category": "development",
       "keywords": [
