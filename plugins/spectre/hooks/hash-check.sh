@@ -17,14 +17,23 @@ fi
 
 extract_files_from_spec() {
     local spec_file="$1"
-    # Extract files from the Where section (lines between "─── Where" and the next "───" or end of spec)
+    # Extract files from the Where section
+    # Supports both Unicode (─── Where ───) and ASCII (--- Where ---) formats
     awk '
-        /─── Where ───/ { in_where = 1; next }
-        /^───/ || /^━━━/ { in_where = 0 }
-        in_where && /\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]+/ {
-            # Extract just the file path (before the colon and line number)
-            match($0, /[A-Za-z][A-Za-z0-9_\/.-]*\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)
-            if (RSTART > 0) print substr($0, RSTART, RLENGTH)
+        /^─── Where/ || /^--- Where/ { in_where = 1; next }
+        /^───/ || /^━━━/ || /^---/ { if (in_where) in_where = 0 }
+        in_where && /\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]/ {
+            line = $0
+            # Match file paths - handle both relative and absolute
+            if (match(line, /[A-Za-z][A-Za-z0-9_\/.-]*\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                path = substr(line, RSTART, RLENGTH)
+                # Extract relative path from absolute paths (find last occurrence of common project dirs)
+                if (match(path, /[a-z]+\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)$/)) {
+                    print substr(path, RSTART, RLENGTH)
+                } else {
+                    print path
+                }
+            }
         }
     ' "$spec_file" 2>/dev/null | sort -u
 }
@@ -40,7 +49,13 @@ hash_file() {
 
 extract_spec_ids() {
     local spec_file="$1"
-    grep -E '^  [✅🔄] ' "$spec_file" 2>/dev/null | sed 's/^  [✅🔄] //' | sed 's/ *$//'
+    # Match both formats:
+    # Unicode: "  ✅ Spec name" or "  🔄 Spec name"
+    # ASCII: "  -  Spec name             PASS 2026-01-31"
+    {
+        grep -E '^  [✅🔄❌⏸] ' "$spec_file" 2>/dev/null | sed 's/^  [✅🔄❌⏸] //' | sed 's/ *$//'
+        grep -E '^  -  .+(PASS|FAIL|STALE|not run)' "$spec_file" 2>/dev/null | sed 's/^  -  //' | sed 's/ *\(PASS\|FAIL\|STALE\|not run\).*//'
+    } | sort -u
 }
 
 for spec_file in "$SPECS_DIR"/*.md; do
@@ -77,7 +92,8 @@ for spec_file in "$SPECS_DIR"/*.md; do
     fi
 
     if [ "$has_changes" = "true" ]; then
-        sed -i.bak 's/^  ✅ /  🔄 /g' "$spec_file"
+        # Handle both Unicode (✅ → 🔄) and ASCII (PASS → STALE) formats
+        sed -i.bak -e 's/^  ✅ /  🔄 /g' -e 's/PASS \([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}\)/STALE \1/g' "$spec_file"
         rm -f "${spec_file}.bak"
     fi
 
