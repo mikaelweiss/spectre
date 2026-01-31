@@ -12,6 +12,9 @@ Write specs. Implement them. Verify them with AI reasoning.
 
 ## Commands
 
+### `/spec-init [area]`
+Bootstrap Spectre for an existing codebase. Analyzes your project thoroughly and creates specs documenting current functionality. Optionally focus on a specific area (e.g., `auth`).
+
 ### `/spec-create`
 Create a new spec through guided ideation. Spectre asks clarifying questions, then writes a complete spec with all the context needed for implementation.
 
@@ -47,10 +50,11 @@ AUTH SPECS
 
 ## How It Works
 
-1. **Create** — `/spec-create` walks you through ideation, asks questions, writes a complete spec
-2. **Implement** — `/spec-implement` reads the spec and implements it exactly as specified
-3. **Test** — The implement agent calls the test agent, loops until specs pass
-4. **Track** — Hooks automatically detect file changes and mark specs as stale
+1. **Init** — `/spec-init` analyzes an existing codebase and creates specs for current functionality
+2. **Create** — `/spec-create` walks you through ideation, asks questions, writes a complete spec
+3. **Implement** — `/spec-implement` reads the spec and implements it exactly as specified
+4. **Test** — The implement agent calls the test agent, loops until specs pass
+5. **Track** — Hooks automatically detect file changes and mark specs as stale
 
 ## File Structure
 
