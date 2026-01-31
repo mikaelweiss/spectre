@@ -1,7 +1,5 @@
 {
   "name": "mikaels-marketplace",
-  "version": "1.0.0",
-  "description": "Spectre - Spec-driven development for Claude Code",
   "owner": {
     "name": "Mikael Weiss",
     "email": "mikael@example.com"
@@ -17,11 +15,15 @@
       },
       "source": {
         "source": "github",
-        "repo": "mikaelweiss/spectre",
-        "path": "plugins/spectre"
+        "repo": "mikaelweiss/spectre"
       },
       "category": "development",
-      "keywords": ["specs", "testing", "verification", "tdd"]
+      "keywords": [
+        "specs",
+        "testing",
+        "verification",
+        "tdd"
+      ]
     }
   ]
 }
