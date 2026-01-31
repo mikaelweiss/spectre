@@ -11,6 +11,10 @@ if [ ! -f "$STATE_FILE" ]; then
     echo "{}" > "$STATE_FILE"
 fi
 
+if ! command -v jq &> /dev/null; then
+    exit 0
+fi
+
 extract_files_from_spec() {
     local spec_file="$1"
     # Extract files from the Where section (lines between "─── Where" and the next "───" or end of spec)
@@ -34,48 +38,51 @@ hash_file() {
     fi
 }
 
-get_stored_hash() {
+extract_spec_ids() {
     local spec_file="$1"
-    local file_path="$2"
-    local spec_basename=$(basename "$spec_file")
-
-    if command -v jq &> /dev/null; then
-        jq -r --arg spec "$spec_basename" --arg file "$file_path" \
-            '.[$spec] // {} | to_entries[] | .value.files[$file] // "none"' \
-            "$STATE_FILE" 2>/dev/null | head -1
-    else
-        echo "none"
-    fi
-}
-
-update_spec_status() {
-    local spec_file="$1"
-    local has_changes="$2"
-
-    if [ "$has_changes" = "true" ]; then
-        sed -i.bak 's/^  ✅ /  🔄 /g' "$spec_file"
-        rm -f "${spec_file}.bak"
-    fi
+    grep -E '^  [✅🔄] ' "$spec_file" 2>/dev/null | sed 's/^  [✅🔄] //' | sed 's/ *$//'
 }
 
 for spec_file in "$SPECS_DIR"/*.md; do
     [ -f "$spec_file" ] || continue
 
+    spec_basename=$(basename "$spec_file")
     files=$(extract_files_from_spec "$spec_file")
-    [ -z "$files" ] && continue
+    spec_ids=$(extract_spec_ids "$spec_file")
 
-    has_changes="false"
+    [ -z "$files" ] && [ -z "$spec_ids" ] && continue
 
+    file_hashes="{}"
     while IFS= read -r file; do
         [ -z "$file" ] && continue
-
         current_hash=$(hash_file "$file")
-        stored_hash=$(get_stored_hash "$spec_file" "$file")
-
-        if [ "$current_hash" != "$stored_hash" ] && [ "$stored_hash" != "none" ]; then
-            has_changes="true"
-        fi
+        file_hashes=$(echo "$file_hashes" | jq --arg f "$file" --arg h "$current_hash" '. + {($f): $h}')
     done <<< "$files"
 
-    update_spec_status "$spec_file" "$has_changes"
+    stored_data=$(jq -r --arg spec "$spec_basename" '.[$spec] // {}' "$STATE_FILE" 2>/dev/null)
+    stored_hashes=$(echo "$stored_data" | jq -r '.files // {}')
+
+    has_changes="false"
+    if [ "$stored_hashes" != "{}" ] && [ "$stored_hashes" != "null" ]; then
+        while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            current_hash=$(echo "$file_hashes" | jq -r --arg f "$file" '.[$f] // "none"')
+            stored_hash=$(echo "$stored_hashes" | jq -r --arg f "$file" '.[$f] // "none"')
+
+            if [ "$stored_hash" != "none" ] && [ "$current_hash" != "$stored_hash" ]; then
+                has_changes="true"
+                break
+            fi
+        done <<< "$files"
+    fi
+
+    if [ "$has_changes" = "true" ]; then
+        sed -i.bak 's/^  ✅ /  🔄 /g' "$spec_file"
+        rm -f "${spec_file}.bak"
+    fi
+
+    new_spec_data=$(jq -n --argjson files "$file_hashes" '{"files": $files}')
+
+    tmp_file=$(mktemp)
+    jq --arg spec "$spec_basename" --argjson data "$new_spec_data" '.[$spec] = $data' "$STATE_FILE" > "$tmp_file" && mv "$tmp_file" "$STATE_FILE"
 done
