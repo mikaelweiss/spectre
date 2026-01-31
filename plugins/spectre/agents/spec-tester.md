@@ -56,9 +56,34 @@ Passing items:
 
 ### Phase 6: Update State
 
-1. Update the spec header with result (✅ or ❌) and today's date
-2. Hash all files listed in the Where section
-3. Update `.spectre-state.json`:
+**1. Update the spec header block at the top of the file**
+
+The header block looks like this (between the `═══` lines):
+```
+═══════════════════════════════════════════════════════════════
+[AREA] SPECS
+═══════════════════════════════════════════════════════════════
+  ⏸  Spec name here                   not run
+  ✅ Other spec                        Jan 15
+═══════════════════════════════════════════════════════════════
+```
+
+Find the line matching the spec you just tested and update it:
+- Change the icon to `✅` (if passed) or `❌` (if failed)
+- Change `not run` (or any previous date) to today's date in `Mon DD` format (e.g., `Jan 31`)
+
+Example transformation for a passing test:
+```
+  ⏸  User login validation            not run
+```
+becomes:
+```
+  ✅ User login validation            Jan 31
+```
+
+**2. Hash all files listed in the Where section**
+
+**3. Update `.spectre-state.json`**
 
 ```json
 {
