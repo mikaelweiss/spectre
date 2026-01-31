@@ -15,7 +15,11 @@
         "name": "Mikael Weiss",
         "email": "mikael@example.com"
       },
-      "source": "./plugins/spectre",
+      "source": {
+        "source": "github",
+        "repo": "mikaelweiss/spectre",
+        "path": "plugins/spectre"
+      },
       "category": "development",
       "keywords": ["specs", "testing", "verification", "tdd"]
     }
