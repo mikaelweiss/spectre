@@ -1,0 +1,13 @@
+{
+  "hooks": [
+    {
+      "event": "PostToolUse",
+      "tools": ["Write", "Edit"],
+      "command": "bash .claude-plugin/hooks/hash-check.sh"
+    },
+    {
+      "event": "Stop",
+      "command": "bash .claude-plugin/hooks/hash-check.sh"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "spectre",
+  "displayName": "Spectre",
+  "description": "Spec-driven development for Claude Code. Write specs, implement them, verify them with AI reasoning.",
+  "version": "0.1.0",
+  "author": "mikaelweiss",
+  "repository": "https://github.com/mikaelweiss/spectre",
+  "license": "MIT",
+  "keywords": ["specs", "testing", "verification", "tdd", "development"],
+  "commands": [
+    {
+      "name": "spec-create",
+      "description": "Create a new spec through guided ideation"
+    },
+    {
+      "name": "spec-implement",
+      "description": "Implement a spec and verify it passes"
+    },
+    {
+      "name": "spec-test",
+      "description": "Test specs to verify they are satisfied"
+    }
+  ]
+}
