@@ -73,43 +73,39 @@ Write the spec in this exact format:
 ▸ [Spec name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SUMMARY
-[1-2 sentences describing what this is]
+[1-2 sentences describing what this is — no header needed]
 
-BEHAVIORS
-- [Each bullet = one clear behavior or requirement]
-- [Include edge cases inline]
+─── What ───────────────────────────────────────
+• [Each bullet = one clear behavior or requirement]
+• [Include edge cases inline]
 
-OUT OF SCOPE
-- [Things explicitly not included]
-- [Decisions made against during brainstorming]
+─── Where ──────────────────────────────────────
+[Path/To/File.swift:line-range]
+[Path/To/OtherFile.swift:line-range]
 
-VERIFY
-- [Specific check the test agent should perform]
-- [Reference exact files and what to look for]
+─── Verify ─────────────────────────────────────
+□ [Specific check the test agent should perform]
+□ [Reference exact files and what to look for]
 
-CHANGES REQUIRED
+─── Update ─────────────────────────────────────
+[Path/To/File.swift:line-range]  →  [Description of what to modify]
+[Path/To/NewFile.swift] (new)    →  [New file purpose and contents]
 
-  [Path/To/File.swift:line-range]
-  [Description of what to modify or add]
-
-  [Path/To/NewFile.swift] (new file)
-  [Description of new file purpose and contents]
-
-DOCUMENTATION
-
+Documentation:
   [Topic name]
   ```
   [Relevant code snippet or API signature]
   ```
 
-IMPLEMENTATION ORDER
+Implementation order:
 1. [First step]
 2. [Second step]
 
-TESTS
-- [Test class/function to create or update]
+Tests to write:
+• [Test class/function to create or update]
 ```
+
+**Important:** The Update section is ONLY for unimplemented specs. It contains everything the implementer needs. After implementation, this section is removed.
 
 ### Phase 5: Confirm
 
@@ -118,8 +114,8 @@ Show the user the spec you're about to write. Ask for confirmation before writin
 ## Guidelines
 
 - Specs should be concise but complete
-- Every file change must have exact line numbers
+- Every file in Where must have exact line numbers (used for change detection)
 - Don't include existing code — just reference locations
 - Implementation order should account for dependencies
-- If something was discussed but rejected, put it in OUT OF SCOPE
-- The spec must be implementable by someone with no prior context
+- If something isn't mentioned, it's out of scope — no need to list exclusions
+- The Update section must contain everything needed to implement without searching

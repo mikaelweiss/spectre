@@ -13,10 +13,16 @@ fi
 
 extract_files_from_spec() {
     local spec_file="$1"
-    grep -E "^  [A-Za-z].*\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]+" "$spec_file" 2>/dev/null | \
-        sed 's/^  //' | \
-        cut -d: -f1 | \
-        sort -u
+    # Extract files from the Where section (lines between "─── Where" and the next "───" or end of spec)
+    awk '
+        /─── Where ───/ { in_where = 1; next }
+        /^───/ || /^━━━/ { in_where = 0 }
+        in_where && /\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]+/ {
+            # Extract just the file path (before the colon and line number)
+            match($0, /[A-Za-z][A-Za-z0-9_\/.-]*\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)
+            if (RSTART > 0) print substr($0, RSTART, RLENGTH)
+        }
+    ' "$spec_file" 2>/dev/null | sort -u
 }
 
 hash_file() {

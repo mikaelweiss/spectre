@@ -71,39 +71,24 @@ Use this exact format for each spec file:
 ▸ [Spec name]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-SUMMARY
-[1-2 sentences describing what this feature does]
+[1-2 sentences describing what this feature does — no header needed]
 
-BEHAVIORS
-- [Current behavior 1]
-- [Current behavior 2]
-- [Edge case handling]
+─── What ───────────────────────────────────────
+• [Current behavior 1]
+• [Current behavior 2]
+• [Edge case handling]
 
-OUT OF SCOPE
-- [Related things this spec doesn't cover]
+─── Where ──────────────────────────────────────
+[Path/To/File.swift:line-range]
+[Path/To/OtherFile.swift:line-range]
 
-VERIFY
-- [How to check this works - reference specific files]
-- [What to look for in the code]
-
-CHANGES REQUIRED
-
-  [Path/To/File.swift:line-range]
-  [What exists here - for reference, not changes]
-
-DOCUMENTATION
-
-  [Relevant framework/API if applicable]
-  ```
-  [Key code pattern used]
-  ```
-
-IMPLEMENTATION ORDER
-[Not applicable for existing code - leave as "N/A - documents existing behavior"]
-
-TESTS
-- [Existing tests if any, or "None - needs tests"]
+─── Verify ─────────────────────────────────────
+□ [How to check this works - reference specific files]
+□ [What to look for in the code]
+□ [Existing tests if any, or "None - needs tests"]
 ```
+
+**Important:** Do NOT include an Update section. Specs from initialization document existing code, so there's nothing to implement.
 
 ### Phase 5: Prioritize and Summarize
 
@@ -132,9 +117,9 @@ Run /spectre:spec-test to verify specs against current code.
 
 - **Document what IS, not what should be** — These specs capture current behavior
 - **Be thorough** — Read the actual code, don't assume
-- **Be specific** — Include file paths and line numbers
-- **Find the boundaries** — What's in scope vs out of scope for each spec
-- **Note missing tests** — Flag areas without test coverage
+- **Be specific** — Include file paths and line numbers in the Where section
+- **No Update section** — These specs are already implemented, nothing to change
+- **Note missing tests** — Flag areas without test coverage in the Verify section
 - **Group logically** — One spec file per major feature area
 - **Keep specs atomic** — Each spec covers one distinct behavior
 

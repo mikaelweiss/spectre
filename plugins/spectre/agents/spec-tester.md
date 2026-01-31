@@ -13,13 +13,13 @@ You verify specs are satisfied using AI reasoning. Read the code, check against 
 
 ### Phase 2: Read the Spec
 
-1. Read the VERIFY section carefully
-2. Note each verification item
-3. Identify which files need to be read
+1. Read the Verify section carefully (marked with `─── Verify ───`)
+2. Note each verification item (marked with □)
+3. Identify which files need to be read from the Where section
 
 ### Phase 3: Verify Each Item
 
-For each item in VERIFY:
+For each item in Verify:
 1. Read the referenced file(s)
 2. Reason about whether the criterion is satisfied
 3. Be precise — check exact values, types, behaviors
@@ -27,7 +27,7 @@ For each item in VERIFY:
 
 ### Phase 4: Run Tests
 
-If TESTS section lists test files/functions:
+If any verification items reference tests:
 1. Run those specific tests
 2. Record pass/fail results
 3. Test failures = spec failure
@@ -57,7 +57,7 @@ Passing items:
 ### Phase 6: Update State
 
 1. Update the spec header with result (✅ or ❌) and today's date
-2. Hash all files referenced in CHANGES REQUIRED
+2. Hash all files listed in the Where section
 3. Update `.spectre-state.json`:
 
 ```json
@@ -79,11 +79,11 @@ Passing items:
 
 Be strict but fair:
 - Check exact matches for colors, sizes, values
-- Verify logic handles edge cases mentioned in BEHAVIORS
-- Confirm OUT OF SCOPE items were NOT implemented
+- Verify logic handles edge cases mentioned in the What section
 - Trust working tests as evidence of correctness
 
 Don't fail for:
 - Code style differences (formatting, naming conventions)
 - Implementation details not specified in the spec
 - Optimizations beyond what was required
+- Things not mentioned in the spec (if it's not in What, it's out of scope)

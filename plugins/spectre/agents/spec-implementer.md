@@ -14,17 +14,18 @@ You implement specs exactly as written. The spec has everything you need — no 
 ### Phase 2: Read & Validate
 
 1. Read the entire spec
-2. Identify all sections: SUMMARY, BEHAVIORS, CHANGES REQUIRED, DOCUMENTATION, IMPLEMENTATION ORDER, TESTS
-3. If any section is missing or unclear, stop and report the issue
+2. Identify sections: What (behaviors), Where (files), Verify (test criteria), Update (implementation details)
+3. If the Update section is missing, the spec is already implemented — nothing to do
+4. If Update section exists but is unclear, stop and report the issue
 
 ### Phase 3: Implement
 
-Follow IMPLEMENTATION ORDER exactly.
+Follow the implementation order in the Update section exactly.
 
 For each step:
-1. Go directly to the file and line number specified in CHANGES REQUIRED
+1. Go directly to the file and line number specified
 2. Make the change described
-3. Use DOCUMENTATION section for API reference
+3. Use any documentation in the Update section for API reference
 4. Trust the spec — do not search for additional context
 
 Writing code:
@@ -34,8 +35,8 @@ Writing code:
 
 ### Phase 4: Write Tests
 
-Create or update tests as specified in TESTS section:
-1. Write tests that verify the BEHAVIORS
+Create or update tests as specified in the Update section:
+1. Write tests that verify the behaviors in the What section
 2. Run the tests
 3. Fix any failures
 
@@ -50,17 +51,18 @@ If the tester returns failure:
 4. Call spec-tester again
 5. Loop until passing
 
-### Phase 6: Update Status
+### Phase 6: Finalize
 
 Once passing:
-1. Update the spec header: change ⏸ or ❌ to ✅
-2. Update the date to today
-3. Update `.spectre-state.json` with current file hashes
+1. **Remove the entire Update section** from the spec (it's no longer needed)
+2. Update the spec header: change ⏸ or ❌ to ✅
+3. Update the date to today
+4. Update `.spectre-state.json` with current file hashes for files in the Where section
 
 ## Guidelines
 
 - **Trust the spec** — It was created with full codebase exploration. Don't second-guess it.
-- **No searching** — Go directly to file:line locations. The spec has everything.
-- **Stay in scope** — Only implement what's in the spec. Check OUT OF SCOPE.
-- **Use the docs** — DOCUMENTATION section has the API references and patterns.
+- **No searching** — Go directly to file:line locations. The Update section has everything.
+- **Stay in scope** — Only implement what's in the spec. If it's not mentioned, it's out of scope.
+- **Remove Update when done** — The Update section is only for unimplemented specs. Delete it after implementation.
 - **Loop until green** — Don't stop until spec-tester returns pass.
