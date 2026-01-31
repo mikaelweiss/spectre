@@ -17,31 +17,25 @@ fi
 
 extract_files_from_spec() {
     local spec_file="$1"
-    # Extract files from the Where section
+    # Extract filenames from the Where section
     # Supports both Unicode (─── Where ───) and ASCII (--- Where ---) formats
     awk '
         /^─── Where/ || /^--- Where/ { in_where = 1; next }
         /^───/ || /^━━━/ || /^---/ { if (in_where) in_where = 0 }
         in_where && /\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]/ {
-            line = $0
-            # Extract the full path first
-            if (match(line, /[A-Za-z][A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
-                path = substr(line, RSTART, RLENGTH)
-                # Strip leading segments until we hit a known source directory
-                # This handles paths like "everhour/convex/..." -> "convex/..."
-                while (match(path, /^[^\/]+\/(convex|everhour|src|lib|app|test|tests)\//)) {
-                    path = substr(path, index(path, "/")+1)
-                }
-                print path
+            # Just extract the filename
+            if (match($0, /[A-Za-z][A-Za-z0-9_.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                print substr($0, RSTART, RLENGTH)
             }
         }
     ' "$spec_file" 2>/dev/null | sort -u
 }
 
 hash_file() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        shasum -a 256 "$file" 2>/dev/null | cut -d' ' -f1
+    local filename="$1"
+    local filepath=$(find . -name "$filename" -type f 2>/dev/null | head -1)
+    if [ -n "$filepath" ] && [ -f "$filepath" ]; then
+        shasum -a 256 "$filepath" 2>/dev/null | cut -d' ' -f1
     else
         echo "missing"
     fi
