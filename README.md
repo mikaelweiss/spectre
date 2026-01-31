@@ -7,7 +7,8 @@ Write specs. Implement them. Verify them with AI reasoning.
 ## Installation
 
 ```
-/plugin install spectre
+/plugin marketplace add mikaelweiss/spectre
+/plugin install spectre@mikaels-marketplace
 ```
 
 ## Commands
