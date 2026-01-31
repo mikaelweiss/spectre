@@ -24,11 +24,30 @@ extract_files_from_spec() {
         /^───/ || /^━━━/ || /^---/ { if (in_where) in_where = 0 }
         in_where && /\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h):[0-9]/ {
             line = $0
-            # Look for common project directory patterns to extract relative path
-            # Matches: everhour/, convex/, src/, lib/, app/, etc.
-            if (match(line, /(everhour|convex|src|lib|app|test|tests|spec|specs)\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
-                print substr(line, RSTART, RLENGTH)
+            # Extract path by finding last occurrence of known source directories
+            # Look for /dirname/ pattern and extract dirname/... onwards
+            path = ""
+            # Try each pattern and keep the rightmost match
+            if (match(line, /\/convex\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                path = substr(line, RSTART+1, RLENGTH-1)
             }
+            if (match(line, /\/everhour\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                candidate = substr(line, RSTART+1, RLENGTH-1)
+                if (length(candidate) < length(path) || path == "") path = candidate
+            }
+            if (match(line, /\/src\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                candidate = substr(line, RSTART+1, RLENGTH-1)
+                if (length(candidate) < length(path) || path == "") path = candidate
+            }
+            if (match(line, /\/lib\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                candidate = substr(line, RSTART+1, RLENGTH-1)
+                if (length(candidate) < length(path) || path == "") path = candidate
+            }
+            if (match(line, /\/app\/[A-Za-z0-9_\/.-]+\.(swift|ts|js|py|go|rs|java|kt|rb|cpp|c|h)/)) {
+                candidate = substr(line, RSTART+1, RLENGTH-1)
+                if (length(candidate) < length(path) || path == "") path = candidate
+            }
+            if (path != "") print path
         }
     ' "$spec_file" 2>/dev/null | sort -u
 }
